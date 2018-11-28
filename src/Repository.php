@@ -13,7 +13,9 @@ class Repository
     public function __construct($app)
     {
         $this->app   = $app;
-        $this->proxy = (new ApiProxy)->setReturnAs('object');
+        $this->proxy = (new ApiProxy)->setReturnAs(
+            config('private-api._.return_type')
+        );
     }
 
     /**

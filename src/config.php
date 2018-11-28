@@ -3,6 +3,14 @@
 return [
 
     /*
+     * 代理配置
+     */
+    '_' => [
+        // 返回值类型：json，array，object
+        'return_type' => 'object',
+    ],
+
+    /*
      * API定义示例
      */
     // 'app-name' => [
