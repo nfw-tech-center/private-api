@@ -2,6 +2,7 @@
 
 namespace Abel\PrivateApi;
 
+use AbelHalo\ApiProxy\ApiProxy;
 use Carbon\Carbon;
 
 class Repository
@@ -12,7 +13,7 @@ class Repository
     public function __construct($app)
     {
         $this->app   = $app;
-        $this->proxy = \ApiProxy::setReturnAs('object');
+        $this->proxy = (new ApiProxy)->setReturnAs('object');
     }
 
     /**
