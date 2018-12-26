@@ -13,6 +13,11 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__ . '/config.php' => config_path('private-api.php'),
         ]);
 
+        $this->mapRoutes();
+    }
+
+    protected function mapRoutes()
+    {
         foreach (config('private-api') as $appName => $appDefinition) {
             foreach ($appDefinition as $apiName => $apiDefinition) {
                 if (!is_array($apiDefinition)) {
@@ -20,17 +25,27 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
                 }
 
                 if (array_has($apiDefinition, 'route')) {
-                    $route      = $apiDefinition['route'];
+                    $path       = $apiDefinition['route'];
                     $privateApi = [
                         'app' => $appName,
                         'api' => $apiName,
                     ];
 
-                    Cache::forever("private-api:route:$route", $privateApi);
+                    Cache::forever("private-api:route:$path", $privateApi);
 
-                    Route::middleware('api')->any($route, AutoGeneratorController::class . '@generateRoute');
+                    $this->route($path);
                 }
             }
         }
+    }
+
+    protected function route($path)
+    {
+        $middleware = array_merge(
+            ['api'],
+            config('private-api._.middleware', [])
+        );
+
+        Route::middleware($middleware)->any($path, AutoGeneratorController::class . '@generateRoute');
     }
 }

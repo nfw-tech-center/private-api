@@ -8,6 +8,8 @@ return [
     '_' => [
         // 返回值类型：json，array，object
         'return_type' => 'object',
+        // 中间件堆栈（应用于所有自动生成的Private API路由）
+        // 'middleware'  => ['auth'],
     ],
 
     /*
@@ -18,8 +20,9 @@ return [
     //     'ticket' => '在管理中心注册的ticket值',
     //
     //     'api-name' => [
+    //         'route'    => '含有route键的api定义，会自动注册路由到Laravel',
     //         'url'      => '对应的原始接口url',
-    //         // 请求参数类型转换
+    //         // 请求参数类型转换（ -> 前后必须留1个空格）
     //         'casts'    => [
     //             'request_params_key1' => 'type1 -> type2',
     //             'request_params_key2' => 'type1 -> type2',
