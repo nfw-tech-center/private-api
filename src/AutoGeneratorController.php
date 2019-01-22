@@ -1,6 +1,6 @@
 <?php
 
-namespace Abel\PrivateApi;
+namespace SouthCN\PrivateApi;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

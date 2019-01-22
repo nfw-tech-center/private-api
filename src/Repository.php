@@ -1,6 +1,6 @@
 <?php
 
-namespace Abel\PrivateApi;
+namespace SouthCN\PrivateApi;
 
 use AbelHalo\ApiProxy\ApiProxy;
 use Carbon\Carbon;

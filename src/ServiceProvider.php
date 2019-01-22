@@ -1,6 +1,6 @@
 <?php
 
-namespace Abel\PrivateApi;
+namespace SouthCN\PrivateApi;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;

@@ -21,13 +21,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Abel\\PrivateApi\\": "src/"
+            "SouthCN\\PrivateApi\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Abel\\PrivateApi\\ServiceProvider"
+                "SouthCN\\PrivateApi\\ServiceProvider"
             ]
         }
     },
