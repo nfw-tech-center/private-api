@@ -13,7 +13,7 @@ class Repository
     public function __construct($app)
     {
         $this->app   = $app;
-        $this->proxy = (new ApiProxy)->setReturnAs(
+        $this->proxy = (new ApiProxy)->enableLog()->setReturnAs(
             config('private-api._.return_type')
         );
     }
