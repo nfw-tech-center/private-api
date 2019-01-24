@@ -44,9 +44,12 @@ class PreparerTest extends TestCase
             'limit'  => 10,
         ];
 
+        $params = ['abc' => 123];
+
         $this->assertArraySubset([
+            'abc'    => 123,
             'offset' => 0,
             'limit'  => 10,
-        ], $this->preparer->setDefaults($defaults, []), true);
+        ], $this->preparer->setDefaults($defaults, $params), true);
     }
 }
