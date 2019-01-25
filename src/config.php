@@ -5,7 +5,7 @@ return [
     /*
      * 代理配置
      */
-    '_' => [
+    '_'        => [
         // 返回值类型：json，array，object
         'return_type' => 'object',
         // 中间件堆栈（应用于所有自动生成的Private API路由）
@@ -18,6 +18,9 @@ return [
     // 'app-name' => [
     //     'app'    => '在管理中心注册的app值',
     //     'ticket' => '在管理中心注册的ticket值',
+    //
+    //     // APP级别的全局自动缓存，取值示例：forever, 2 minutes, 15 seconds
+    //     // 'cache' => 'forever',
     //
     //     'api-name' => [
     //         'route'    => '含有route键的api定义，会自动注册路由到Laravel',
