@@ -28,6 +28,7 @@ class Repository
     {
         $preparer = new Preparer;
         $url      = array_get($this->config, "$name.url");
+        $hasFiles = array_get($this->config, "$name.has_files", false);
         $casts    = array_get($this->config, "$name.casts", []);
         $defaults = array_get($this->config, "$name.defaults", []);
 
@@ -35,29 +36,33 @@ class Repository
         $params = $preparer->cast($casts, $params);
         $params = $preparer->setDefaults($defaults, $params);
 
-        return $this->post($url, $params);
+        return $this->post($url, $params, $hasFiles);
     }
 
-    protected function post(string $url, array $params)
+    protected function post(string $url, array $params, bool $withFiles = false)
     {
         $app    = array_get($this->config, 'app');
         $ticket = array_get($this->config, 'ticket');
         $cache  = array_get($this->config, 'cache');
 
-        $apiCache = new ApiCache($cache ?: '');
-        $key      = md5($app . $url . serialize($params));
+        if (!$withFiles) {
+            $apiCache = new ApiCache($cache ?: '');
+            $key      = md5($app . $url . serialize($params));
 
-        if ($response = $apiCache->get($key)) {
-            return $response;
+            if ($response = $apiCache->get($key)) {
+                return $response;
+            }
         }
 
-        $response = $this->proxy->post($url, array_merge($params, [
+        $response = $this->proxy->{$withFiles ? 'postWithFiles' : 'post'}($url, array_merge($params, [
             'app'   => $app,
             'time'  => $time = time(),
             'token' => $this->calculateToken($app, $ticket, $time),
         ]));
 
-        $apiCache->smartCache($key, $response);
+        if (!$withFiles) {
+            $apiCache->smartCache($key, $response);
+        }
 
         return $response;
     }

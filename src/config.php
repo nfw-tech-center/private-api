@@ -23,15 +23,16 @@ return [
     //     // 'cache' => 'forever',
     //
     //     'api-name' => [
-    //         'route'    => '含有route键的api定义，会自动注册路由到Laravel',
-    //         'url'      => '对应的原始接口url',
+    //         'route'     => '含有route键的api定义，会自动注册路由到Laravel',
+    //         'url'       => '对应的原始接口url',
+    //         'has_files' => true, // 指示使用multipart/form-data请求
     //         // 请求参数类型转换（ -> 前后必须留1个空格）
-    //         'casts'    => [
+    //         'casts'     => [
     //             'request_params_key1' => 'type1 -> type2',
     //             'request_params_key2' => 'type1 -> type2',
     //         ],
     //         // 请求参数默认值
-    //         'defaults' => [
+    //         'defaults'  => [
     //             'request_params_key1' => '默认值',
     //             'request_params_key2' => '默认值',
     //         ],
