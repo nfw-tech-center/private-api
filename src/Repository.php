@@ -21,17 +21,18 @@ class Repository
         $this->config = config("private-api.$app");
         $this->guard  = $guard;
         $this->proxy  = (new ApiProxy)
-            ->enableLog()
             ->headers(['Accept' => 'application/json'])
             ->setReturnAs(config('private-api._.return_type'));
 
         $this->clientApp    = array_get($this->config, 'app');
         $this->clientTicket = array_get($this->config, 'ticket');
+
+        $this->proxy->logger->enable();
     }
 
     /**
-     * @param string $name
-     * @param array  $params
+     * @param  string  $name
+     * @param  array   $params
      * @return mixed
      */
     public function api(string $name, array $params = [])
@@ -76,8 +77,8 @@ class Repository
         }
 
         $response = $this->proxy->{$withFiles ? 'postWithFiles' : 'post'}($url, array_merge($params, [
-            'app'   => $this->clientApp,
-            'time'  => $time = time(),
+            'app' => $this->clientApp,
+            'time' => $time = time(),
             'token' => $this->calculateToken($this->clientApp, $this->clientTicket, $time),
         ]));
 

@@ -14,7 +14,7 @@
     ],
     "require": {
         "php": ">=7.1.0",
-        "abelhalo/api-proxy": "^1.4"
+        "abelhalo/api-proxy": "^1.6"
     },
     "require-dev": {
         "orchestra/testbench": "~3.0"
