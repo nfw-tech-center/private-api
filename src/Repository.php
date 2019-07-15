@@ -39,15 +39,17 @@ class Repository
     {
         $this->guard($name);
 
-        $preparer = new Preparer;
-        $url      = array_get($this->config, "$name.url");
-        $hasFiles = array_get($this->config, "$name.has_files", false);
-        $casts    = array_get($this->config, "$name.casts", []);
-        $defaults = array_get($this->config, "$name.defaults", []);
+        $preparer     = new Preparer;
+        $url          = array_get($this->config, "$name.url");
+        $hasFiles     = array_get($this->config, "$name.has_files", false);
+        $casts        = array_get($this->config, "$name.casts", []);
+        $defaults     = array_get($this->config, "$name.defaults", []);
+        $parameterMap = array_get($this->config, "$name.parameter_map_of_app", []);
 
         // Prepare API request
         $params = $preparer->cast($casts, $params);
         $params = $preparer->setDefaults($defaults, $params);
+        $params = $preparer->setParameterMap($parameterMap, $params, $this->app);
 
         return $this->post($url, $params, $hasFiles);
     }

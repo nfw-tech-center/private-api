@@ -38,4 +38,15 @@ class Preparer
 
         return $params;
     }
+
+    public function setParameterMap(array $map, array $params, string $app): array
+    {
+        $pairs = collect($map)->get($app);
+
+        if (!$pairs) {
+            abort(403, 'API鉴权错误：APP无此接口权限');
+        }
+
+        return array_merge($params, $pairs);
+    }
 }
