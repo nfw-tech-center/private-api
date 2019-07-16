@@ -39,9 +39,9 @@ class Preparer
         return $params;
     }
 
-    public function setParameterMap(array $map, array $params, string $app): array
+    public function setParameterMap(array $map, array $params): array
     {
-        $pairs = collect($map)->get($app);
+        $pairs = collect($map)->get(request('app'));
 
         if (!$pairs) {
             abort(403, 'API鉴权错误：APP无此接口权限');

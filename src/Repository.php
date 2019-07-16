@@ -49,7 +49,7 @@ class Repository
         // Prepare API request
         $params = $preparer->cast($casts, $params);
         $params = $preparer->setDefaults($defaults, $params);
-        $params = $preparer->setParameterMap($parameterMap, $params, $this->app);
+        $params = $preparer->setParameterMap($parameterMap, $params);
 
         return $this->post($url, $params, $hasFiles);
     }
