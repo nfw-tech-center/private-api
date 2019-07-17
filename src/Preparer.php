@@ -41,6 +41,10 @@ class Preparer
 
     public function setParameterMap(array $map, array $params): array
     {
+        if (empty($map)) {
+            return $params;
+        }
+
         $pairs = collect($map)->get(request('app'));
 
         if (!$pairs) {
