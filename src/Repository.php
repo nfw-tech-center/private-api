@@ -45,11 +45,18 @@ class Repository
         $casts        = array_get($this->config, "$name.casts", []);
         $defaults     = array_get($this->config, "$name.defaults", []);
         $parameterMap = array_get($this->config, "$name.parameter_map_of_app", []);
+        $httpLogic    = array_get($this->config, "$name.custom_http_logic");
 
         // Prepare API request
         $params = $preparer->cast($casts, $params);
         $params = $preparer->setDefaults($defaults, $params);
         $params = $preparer->setParameterMap($parameterMap, $params);
+
+        if ($httpLogic) {
+            $wrapper = app($httpLogic);
+
+            return $wrapper($this->proxy, $url, $params);
+        }
 
         return $this->post($url, $params, $hasFiles);
     }
