@@ -4,30 +4,31 @@ namespace SouthCN\PrivateApi;
 
 use AbelHalo\ApiProxy\ApiProxy;
 use SouthCN\PrivateApi\Repositories\ApiCache;
+use SouthCN\PrivateApi\Repositories\AuthenticationAlgorithm;
+use SouthCN\PrivateApi\Repositories\Preparer;
 
 class Repository
 {
+    protected $proxy;
+    protected $authAlgorithm;
+
     protected $app;
     protected $config;
     protected $guard;
-    protected $proxy;
-
-    protected $clientApp;
-    protected $clientTicket;
 
     public function __construct(string $app, ?\Closure $guard = null)
     {
         $this->app    = $app;
         $this->config = config("private-api.$app");
         $this->guard  = $guard;
-        $this->proxy  = (new ApiProxy)
+
+        $this->proxy = (new ApiProxy)
             ->headers(['Accept' => 'application/json'])
             ->setReturnAs(config('private-api._.return_type'));
 
-        $this->clientApp    = array_get($this->config, 'app');
-        $this->clientTicket = array_get($this->config, 'ticket');
-
         $this->proxy->logger->enable();
+
+        $this->authAlgorithm = new AuthenticationAlgorithm($this->config['app'], $this->config['ticket']);
     }
 
     /**
@@ -78,28 +79,21 @@ class Repository
 
         if (!$withFiles) {
             $apiCache = new ApiCache($cache ?: '');
-            $key      = md5($this->clientApp . $url . serialize($params));
+            $key      = md5($this->authAlgorithm->app . $url . serialize($params));
 
             if ($response = $apiCache->get($key)) {
                 return $response;
             }
         }
-
-        $response = $this->proxy->{$withFiles ? 'postWithFiles' : 'post'}($url, array_merge($params, [
-            'app' => $this->clientApp,
-            'time' => $time = time(),
-            'token' => $this->calculateToken($this->clientApp, $this->clientTicket, $time),
-        ]));
+        $response = $this->proxy->{$withFiles ? 'postWithFiles' : 'post'}(
+            $url,
+            $this->authAlgorithm->processParams($params)
+        );
 
         if (!$withFiles) {
             $apiCache->smartCache($key, $response);
         }
 
         return $response;
-    }
-
-    protected function calculateToken($app, $ticket, $time)
-    {
-        return md5($app . $time . $ticket);
     }
 }

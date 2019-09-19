@@ -1,6 +1,6 @@
 <?php
 
-namespace SouthCN\PrivateApi;
+namespace SouthCN\PrivateApi\Repositories;
 
 use Carbon\Carbon;
 
