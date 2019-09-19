@@ -5,23 +5,24 @@ namespace SouthCN\PrivateApi;
 use AbelHalo\ApiProxy\ApiProxy;
 use SouthCN\PrivateApi\Repositories\ApiCache;
 use SouthCN\PrivateApi\Repositories\AuthenticationAlgorithm;
+use SouthCN\PrivateApi\Repositories\Guard;
 use SouthCN\PrivateApi\Repositories\Preparer;
 
 class Repository
 {
+    protected $guard;
     protected $proxy;
     protected $authAlgorithm;
 
     protected $app;
     protected $config;
-    protected $guard;
 
     public function __construct(string $app, ?\Closure $guard = null)
     {
         $this->app    = $app;
         $this->config = config("private-api.$app");
-        $this->guard  = $guard;
 
+        $this->guard = new Guard($guard);
         $this->proxy = (new ApiProxy)
             ->headers(['Accept' => 'application/json'])
             ->setReturnAs(config('private-api._.return_type'));
@@ -38,7 +39,7 @@ class Repository
      */
     public function api(string $name, array $params = [])
     {
-        $this->guard($name);
+        $this->guard->run($this->app, $name);
 
         $preparer     = new Preparer;
         $url          = array_get($this->config, "$name.url");
@@ -60,17 +61,6 @@ class Repository
         }
 
         return $this->post($url, $params, $hasFiles);
-    }
-
-    protected function guard(string $name): void
-    {
-        if (!is_callable($this->guard)) {
-            return;
-        }
-
-        if (!($this->guard)($this->app, $name)) {
-            abort(403, '无此API授权');
-        }
     }
 
     protected function post(string $url, array $params, bool $withFiles = false)
