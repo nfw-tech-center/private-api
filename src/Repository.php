@@ -6,14 +6,16 @@ use AbelHalo\ApiProxy\ApiProxy;
 use SouthCN\PrivateApi\Repositories\ApiCache;
 use SouthCN\PrivateApi\Repositories\AuthenticationAlgorithm;
 use SouthCN\PrivateApi\Repositories\Guard;
+use SouthCN\PrivateApi\Repositories\Hook;
 use SouthCN\PrivateApi\Repositories\Preparer;
 
 class Repository
 {
     protected $guard;
+    protected $hook;
     protected $proxy;
-    protected $authAlgorithm;
 
+    protected $authAlgorithm;
     protected $app;
     protected $config;
 
@@ -23,6 +25,7 @@ class Repository
         $this->config = config("private-api.$app");
 
         $this->guard = new Guard($guard);
+        $this->hook  = new Hook($this->config['_']['hooks'] ?? []);
         $this->proxy = (new ApiProxy)
             ->headers(['Accept' => 'application/json'])
             ->setReturnAs(config('private-api._.return_type'));
@@ -50,6 +53,8 @@ class Repository
         $params = $preparer->cast($params);
         $params = $preparer->setDefaults($params);
         $params = $preparer->setParameterMap($params);
+
+        $this->hook->run('before-requesting', $this->proxy, $url, $params);
 
         if ($httpLogic) {
             $wrapper = app($httpLogic);
