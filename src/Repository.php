@@ -41,18 +41,15 @@ class Repository
     {
         $this->guard->run($this->app, $name);
 
-        $preparer     = new Preparer;
-        $url          = array_get($this->config, "$name.url");
-        $hasFiles     = array_get($this->config, "$name.has_files", false);
-        $casts        = array_get($this->config, "$name.casts", []);
-        $defaults     = array_get($this->config, "$name.defaults", []);
-        $parameterMap = array_get($this->config, "$name.parameter_map_of_app", []);
-        $httpLogic    = array_get($this->config, "$name.custom_http_logic");
+        $preparer  = new Preparer($this->config[$name] ?? []);
+        $url       = array_get($this->config, "$name.url");
+        $hasFiles  = array_get($this->config, "$name.has_files", false);
+        $httpLogic = array_get($this->config, "$name.custom_http_logic");
 
         // Prepare API request
-        $params = $preparer->cast($casts, $params);
-        $params = $preparer->setDefaults($defaults, $params);
-        $params = $preparer->setParameterMap($parameterMap, $params);
+        $params = $preparer->cast($params);
+        $params = $preparer->setDefaults($params);
+        $params = $preparer->setParameterMap($params);
 
         if ($httpLogic) {
             $wrapper = app($httpLogic);

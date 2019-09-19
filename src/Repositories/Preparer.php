@@ -6,9 +6,20 @@ use Carbon\Carbon;
 
 class Preparer
 {
-    public function cast(array $casts, array $params): array
+    protected $casts;
+    protected $defaults;
+    protected $parameterMap;
+
+    public function __construct(array $apiConfig)
     {
-        collect($casts)->each(function ($cast, $key) use (&$params) {
+        $this->casts        = array_get($apiConfig, 'casts', []);
+        $this->defaults     = array_get($apiConfig, 'defaults', []);
+        $this->parameterMap = array_get($apiConfig, 'parameter_map_of_app', []);
+    }
+
+    public function cast(array $params): array
+    {
+        collect($this->casts)->each(function ($cast, $key) use (&$params) {
             if (!array_has($params, $key)) {
                 return;
             }
@@ -30,22 +41,22 @@ class Preparer
         return $params;
     }
 
-    public function setDefaults(array $defaults, array $params): array
+    public function setDefaults(array $params): array
     {
-        collect($defaults)->each(function ($value, $key) use (&$params) {
+        collect($this->defaults)->each(function ($value, $key) use (&$params) {
             $params[$key] = array_get($params, $key, $value);
         });
 
         return $params;
     }
 
-    public function setParameterMap(array $map, array $params): array
+    public function setParameterMap(array $params): array
     {
-        if (empty($map)) {
+        if (empty($this->map)) {
             return $params;
         }
 
-        $pairs = collect($map)->get(request('app'));
+        $pairs = collect($this->map)->get(request('app'));
 
         if (!$pairs) {
             abort(403, 'API鉴权错误：APP无此接口权限');
