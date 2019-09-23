@@ -19,13 +19,18 @@ class AuthenticationAlgorithm
 
         $params['app']   = $this->app;
         $params['time']  = $time;
-        $params['token'] = $this->calculateToken($this->app, $this->ticket, $time);
+        $params['token'] = $this->calculateToken($time);
 
         return $params;
     }
 
-    protected function calculateToken(string $app, string $ticket, string $time): string
+    public function verifyToken(string $token, string $time): bool
     {
-        return md5($app . $time . $ticket);
+        return $token == $this->calculateToken($time);
+    }
+
+    protected function calculateToken(string $time): string
+    {
+        return md5($this->app . $time . $this->ticket);
     }
 }
