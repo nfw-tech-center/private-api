@@ -52,11 +52,11 @@ class Preparer
 
     public function setParameterMap(array $params): array
     {
-        if (empty($this->map)) {
+        if (empty($this->parameterMap)) {
             return $params;
         }
 
-        $pairs = collect($this->map)->get(request('app'));
+        $pairs = collect($this->parameterMap)->get(request('app'));
 
         if (!$pairs) {
             abort(403, 'API鉴权错误：APP无此接口权限');
