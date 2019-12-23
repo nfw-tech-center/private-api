@@ -7,12 +7,14 @@ use SouthCN\PrivateApi\Repositories\ApiCache;
 use SouthCN\PrivateApi\Repositories\AuthenticationAlgorithm;
 use SouthCN\PrivateApi\Repositories\Guard;
 use SouthCN\PrivateApi\Repositories\Hook;
+use SouthCN\PrivateApi\Repositories\HttpLogic;
 use SouthCN\PrivateApi\Repositories\Preparer;
 
 class Repository
 {
     protected $guard;
     protected $hook;
+    protected $httpLogic;
     protected $proxy;
 
     protected $authAlgorithm;
@@ -21,18 +23,18 @@ class Repository
 
     public function __construct(string $app, ?\Closure $guard = null)
     {
-        $this->app    = $app;
+        $this->app = $app;
         $this->config = config("private-api.$app");
 
+        $this->authAlgorithm = new AuthenticationAlgorithm($this->config['app'], $this->config['ticket']);
         $this->guard = new Guard($guard);
-        $this->hook  = new Hook($this->config['_']['hooks'] ?? []);
+        $this->hook = new Hook($this->config['_']['hooks'] ?? []);
+        $this->httpLogic = new HttpLogic($this->config['_']['custom_http_logic'] ?? null, $this->authAlgorithm);
         $this->proxy = (new ApiProxy)
             ->headers(['Accept' => 'application/json'])
             ->setReturnAs(config('private-api._.return_type'));
 
         $this->proxy->logger->enable();
-
-        $this->authAlgorithm = new AuthenticationAlgorithm($this->config['app'], $this->config['ticket']);
     }
 
     /**
@@ -60,6 +62,10 @@ class Repository
             $wrapper = app($httpLogic);
 
             return $wrapper($this->proxy, $url, $params);
+        }
+
+        if ($this->httpLogic->valid()) {
+            return $this->httpLogic->run($this->proxy, $url, $params);
         }
 
         return $this->post($url, $params, $hasFiles);
