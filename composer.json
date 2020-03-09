@@ -1,17 +1,5 @@
 {
     "name": "southcn/private-api",
-    "description": "A package for Laravel",
-    "keywords": [
-        "laravel"
-    ],
-    "homepage": "https://github.com/zxz054321/private-api",
-    "authors": [
-        {
-            "name": "Abel",
-            "email": "zxz054321@foxmail.com",
-            "homepage": "https://github.com/zxz054321"
-        }
-    ],
     "require": {
         "php": ">=7.1.0",
         "abelhalo/api-proxy": "^1.6"
