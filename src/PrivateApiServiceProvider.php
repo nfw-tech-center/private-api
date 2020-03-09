@@ -4,8 +4,9 @@ namespace SouthCN\PrivateApi;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
 
-class ServiceProvider extends \Illuminate\Support\ServiceProvider
+class PrivateApiServiceProvider extends ServiceProvider
 {
     public function boot()
     {
@@ -25,7 +26,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
                 }
 
                 if (array_has($apiDefinition, 'route')) {
-                    $path       = $apiDefinition['route'];
+                    $path = $apiDefinition['route'];
                     $privateApi = [
                         'app' => $appName,
                         'api' => $apiName,
